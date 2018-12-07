@@ -14,6 +14,46 @@
             margin-top: 15px;
         }
     </style>
+    <script  type='text/javascript'>
+	function objToString (obj) {
+		var str = '';
+		for (var p in obj) {
+			if (obj.hasOwnProperty(p)) {
+				str += p + ' : ' + obj[p] + '\n';
+			}
+		}
+		return str;
+	};
+	window.onload = function() {
+		var regex = /([0-9]+)\.([\t\s0-9]+)\n([0-9a-z ]+)\.\sMiejsce ([a-z_]+) zaatakowałeś ([a-zA-Z0-9\u0041-\u017E ]+)\n([\u0041-\u017E]+) ([a-zA-Z\u0041-\u017E0-9 ]+)\nzabrałeś trofeum ([a-zA-Z0-9\u0041-\u017E ]+) zdobyłeś doświadczenia ([0-9]+)/,
+	    	    	calculate = function() {
+				var log = document.getElementById("log").value,
+					lines = log.match(new RegExp(regex, "mgi")),
+					exp = 0,
+					enemies = {},
+					trophies = {};
+				for (var i = 0;i<lines.length;i++) {
+					var matches = new RegExp(regex).exec(lines[i]),
+					    enemy = matches[5],
+					    trophy = matches[8];
+
+					exp += parseInt(matches[9]);
+					if (enemies[enemy] == undefined) {
+						enemies[enemy] = 0;
+					}
+					if (trophies[trophy] == undefined) {	
+						trophies[trophy] = 0;
+					}
+					enemies[enemy] += 1;
+					trophies[trophy] += 1;
+				}
+
+				document.getElementById("result").value = "doświadczenie: "+exp+"\n\nprzeciwnicy:\n"+objToString(enemies)+"\ntrofea:\n"+objToString(trophies);
+				return false;
+			};
+		document.getElementById("form").onsubmit = calculate;
+	};
+    </script>
 </head>
 
 <body>
@@ -26,11 +66,14 @@
                 Wklej zawartość dziennika, żeby obliczyć zdobytego expa
             </p>
             <form action="#" method="POST" id="form" class="form-inline">
-                <div class="form-group">
-                    <textarea id="log" class="form-control" placeholder="Twój dziennik"></textarea>
+                <div class="form-group col-md-5">
+                    <textarea id="log" class="form-control" placeholder="tutaj wklej dziennik" rows="10" cols="42"></textarea>
                 </div>
-                <div class="form-group">
+                <div class="form-group col-md-1">
                     <button type="submit" class="btn btn-primary">oblicz</button>
+                </div>
+		<div class="form-group col-md-6">
+                    <textarea id="result" class="form-control" rows="10" cols="50"></textarea>
                 </div>
             </form>
         </div>
